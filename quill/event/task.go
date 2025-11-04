@@ -1,11 +1,6 @@
 package event
 
-import "github.com/wagoodman/go-progress"
-
-type ManualStagedProgress struct {
-	progress.Stage
-	progress.Manual
-}
+type ManualStagedProgress struct{}
 
 type Title struct {
 	Default      string

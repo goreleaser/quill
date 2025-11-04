@@ -20,8 +20,6 @@ require (
 	github.com/klauspost/compress v1.17.8
 	github.com/scylladb/go-set v1.0.3-0.20200225121959-cc7b2070d91e
 	github.com/stretchr/testify v1.9.0
-	github.com/wagoodman/go-partybus v0.0.0-20230516145632-8ccac152c651
-	github.com/wagoodman/go-progress v0.0.0-20220614130704-4b1c25a33c7c
 	software.sslmate.com/src/go-pkcs12 v0.6.0
 )
 
@@ -43,8 +41,6 @@ require (
 	github.com/aws/smithy-go v1.23.1 // indirect
 	github.com/blacktop/go-dwarf v1.0.10 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/hashicorp/errwrap v1.0.0 // indirect
-	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pkg/errors v0.9.1 // indirect

@@ -5,8 +5,6 @@ defined here there should be a corresponding event parser defined in the parsers
 package event
 
 import (
-	"github.com/wagoodman/go-partybus"
-
 	"github.com/goreleaser/quill/internal"
 )
 
@@ -14,11 +12,11 @@ const (
 	typePrefix    = internal.ApplicationName
 	cliTypePrefix = typePrefix + "-cli"
 
-	TaskType partybus.EventType = typePrefix + "-task"
+	TaskType = typePrefix + "-task"
 
 	// CLIExitType is a partybus event indicating the main process is to exit
-	CLIExitType         partybus.EventType = cliTypePrefix + "-exit-event"
-	CLIReportType       partybus.EventType = cliTypePrefix + "-report"
-	CLINotificationType partybus.EventType = cliTypePrefix + "-notification"
-	CLIInputPromptType  partybus.EventType = cliTypePrefix + "-input-prompt"
+	CLIExitType         = cliTypePrefix + "-exit-event"
+	CLIReportType       = cliTypePrefix + "-report"
+	CLINotificationType = cliTypePrefix + "-notification"
+	CLIInputPromptType  = cliTypePrefix + "-input-prompt"
 )
