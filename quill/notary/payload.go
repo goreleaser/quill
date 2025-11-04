@@ -42,7 +42,6 @@ func prepareZip(path string) (*Payload, error) {
 	log.Trace("using provided zip as payload")
 
 	f, err := os.Open(path)
-
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +141,6 @@ func createZip(name string, reader io.Reader) (*bytes.Buffer, error) {
 
 func fileContentType(path string) (string, error) {
 	f, err := os.Open(path)
-
 	if err != nil {
 		return "", err
 	}
