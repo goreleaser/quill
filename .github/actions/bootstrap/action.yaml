@@ -4,7 +4,7 @@ inputs:
   go-version:
     description: "Go version to install"
     required: true
-    default: "1.18.x"
+    default: "1.24.x"
   use-go-cache:
     description: "Restore go cache"
     required: true
@@ -72,8 +72,14 @@ runs:
     - name: Install apt packages
       if: inputs.bootstrap-apt-packages != ''
       shell: bash
+      env:
+        APT_PACKAGES: ${{ inputs.bootstrap-apt-packages }}
       run: |
-        DEBIAN_FRONTEND=noninteractive sudo apt update && sudo -E apt install -y ${{ inputs.bootstrap-apt-packages }}
+        # Convert space-separated string to bash array for safe handling
+        read -ra packages <<< "$APT_PACKAGES"
+        if [ ${#packages[@]} -gt 0 ]; then
+          DEBIAN_FRONTEND=noninteractive sudo apt update && sudo -E apt install -y "${packages[@]}"
+        fi
 
     - name: Create all cache fingerprints
       shell: bash
