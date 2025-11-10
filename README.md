@@ -2,11 +2,10 @@
 
 this is a fork of quill, by anchore
 
-goreleaser uses quill to notarize and sign, but we don't need the TUI stuff.
-This wasnt a problem until recently, as quill is still using older versions of
-some libraries which are conflicting with other libraries goreleaser uses.
+goreleaser uses quill to notarize and sign, but we don't need the TUI stuff,
+logging, and more.
 
-this is hopefully a temporary fork.
+this fork removes most of what we don't need.
 
 # Quill
 
@@ -30,10 +29,9 @@ curl -sSfL https://get.anchore.io/quill | sudo sh -s -- -b /usr/local/bin
 curl -sSfL https://get.anchore.io/quill | sudo sh -s -- -b <DESTINATION_DIR> <RELEASE_VERSION>
 ```
 
-
 ## Usage
 
-First you need to download the signing private key and certificate from Apple (this is in the form of a ".p12" file). 
+First you need to download the signing private key and certificate from Apple (this is in the form of a ".p12" file).
 
 ```bash
 # run on **any platform** to sign the binary
@@ -44,8 +42,8 @@ $ export QUILL_SIGN_PASSWORD=[p12-password]
 $ quill sign [path/to/binary]
 ```
 
-**Note**: The signing certificate must be issued by Apple and the full certificate chain must be available at 
-signing time. See the section below on ["Attaching the full certificate chain"](#attaching-the-full-certificate-chain) if you do not wish to rely on the 
+**Note**: The signing certificate must be issued by Apple and the full certificate chain must be available at
+signing time. See the section below on ["Attaching the full certificate chain"](#attaching-the-full-certificate-chain) if you do not wish to rely on the
 [Apple intermediate and root certificates](https://www.apple.com/certificateauthority/) embedded into the Quill binary.
 
 After signing you can notarize the binary against Apple's notary service:
@@ -65,6 +63,7 @@ $ quill sign-and-notarize [path/to/binary]
 ```
 
 Here's an example of using quill with goreleaser:
+
 ```yaml
 # .goreleaser.yml
 builds:
@@ -94,6 +93,7 @@ In order to pass notarization with Apple you must use:
 2. Have the full certificate chain available at signing time
 
 Without the full chain, Apple will reject the notarization request with the following error:
+
 ```json
 {
   "issues": [
@@ -113,7 +113,7 @@ Without the full chain, Apple will reject the notarization request with the foll
 }
 ```
 
-Quill can attach the full certificate chain at signing time with the Apple root and intermediate certificates embedded 
+Quill can attach the full certificate chain at signing time with the Apple root and intermediate certificates embedded
 into the Quill binary (obtained from [Apple](https://www.apple.com/certificateauthority/) directly). However, an
 alternative to this approach is to attach the full certificate chain to your P12 file:
 
@@ -130,7 +130,6 @@ $ quill p12 attach-chain [path-to-p12-from-apple]
 
 At this point you can use `quill p12 describe` to confirm the full certificate chain is attached.
 
-
 ## Commands
 
 - `sign [binary-file]`: sign a mac executable binary
@@ -140,22 +139,22 @@ At this point you can use `quill p12 describe` to confirm the full certificate c
 - `submission logs [id]`: fetch logs for an existing submission from Apple's Notary service
 - `submission status [id]`: check against Apple's Notary service to see the status of a notarization submission request
 - `describe [binary-file]`: show the details of a mac binary
-- `extract certificates [binary-file]`:  extract certificates from a signed mac binary
+- `extract certificates [binary-file]`: extract certificates from a signed mac binary
 - `p12 attach-chain [p12-file]`: attach the full Apple certificate chain into a p12 file (MUST run on a mac with keychain access)
 - `p12 describe [p12-file]`: describe the contents of a p12 file
 
-
 ## Configuration
+
 Search locations: `.quill.yaml`, `quill.yaml`, `.quill/config.yaml`, `~/.quill.yaml`, `~/quill.yaml`, `$XDG_CONFIG_HOME/quill/config.yaml`
 
 ```yaml
 log:
   # suppress logging output (env var: "QUILL_LOG_QUIET")
   quiet: false
-  
+
   # error, warn, info, debug, trace (env var: "QUILL_LOG_LEVEL")
   level: "info"
-  
+
   # file to write all loge entries to (env var: "QUILL_LOG_FILE")
   file: ""
 ```
@@ -173,4 +172,3 @@ upwards of 20 minutes.
 Unlike docker, which inherently needs to run on a linux host (docker on a mac is a VM), there is nothing inherently
 mac-specific about signing a binary. This tool enables already cross-platform toolchains to run the signing step on
 any platform.
-

@@ -1,11 +1,14 @@
 package event
 
-import "github.com/wagoodman/go-progress"
-
 type ManualStagedProgress struct {
-	progress.Stage
-	progress.Manual
+	N     int
+	Err   error
+	Stage struct {
+		Current string
+	}
 }
+
+func (ManualStagedProgress) SetCompleted() {}
 
 type Title struct {
 	Default      string
