@@ -1,6 +1,14 @@
 package event
 
-type ManualStagedProgress struct{}
+type ManualStagedProgress struct {
+	N     int
+	Err   error
+	Stage struct {
+		Current string
+	}
+}
+
+func (ManualStagedProgress) SetCompleted() {}
 
 type Title struct {
 	Default      string

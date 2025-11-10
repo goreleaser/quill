@@ -21,7 +21,3 @@ func Set(p any) {
 func Get() any {
 	return nil
 }
-
-// publish an event onto the bus. If there is no bus set by the calling application, this does nothing.
-func publish(e any) {
-}

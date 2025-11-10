@@ -13,6 +13,8 @@ type StatusConfig struct {
 	Wait    bool
 }
 
+func (s *StatusConfig) WithProgress(any) *StatusConfig { return s }
+
 func PollStatus(ctx context.Context, sub *Submission, cfg StatusConfig) (SubmissionStatus, error) {
 	var err error
 
