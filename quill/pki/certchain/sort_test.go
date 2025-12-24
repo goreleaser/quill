@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/anchore/quill/internal/test"
-	"github.com/anchore/quill/quill/pki/load"
+	"github.com/goreleaser/quill/internal/test"
+	"github.com/goreleaser/quill/quill/pki/load"
 )
 
 func Test_sortCertificates(t *testing.T) {
@@ -64,7 +64,6 @@ func Test_sortCertificates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			var certs []*x509.Certificate
 			for _, path := range tt.certPaths {
 				readCerts, err := load.Certificates(path)

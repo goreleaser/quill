@@ -8,10 +8,10 @@ import (
 	blacktopMacho "github.com/blacktop/go-macho"
 
 	macholibre "github.com/anchore/go-macholibre"
-	"github.com/anchore/quill/quill/macho"
-	"github.com/anchore/quill/quill/pki"
-	"github.com/anchore/quill/quill/pki/load"
-	"github.com/anchore/quill/quill/sign"
+	"github.com/goreleaser/quill/quill/macho"
+	"github.com/goreleaser/quill/quill/pki"
+	"github.com/goreleaser/quill/quill/pki/load"
+	"github.com/goreleaser/quill/quill/sign"
 )
 
 type SigningConfig struct {

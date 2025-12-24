@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anchore/quill/internal/test"
-	"github.com/anchore/quill/test/trait"
+	"github.com/goreleaser/quill/internal/test"
+	"github.com/goreleaser/quill/test/trait"
 )
 
 func Test_DescribeCommand(t *testing.T) {

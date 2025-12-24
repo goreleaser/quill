@@ -16,14 +16,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/anchore/quill/internal/test"
-	"github.com/anchore/quill/quill/macho"
-	"github.com/anchore/quill/quill/pki"
+	"github.com/goreleaser/quill/internal/test"
+	"github.com/goreleaser/quill/quill/macho"
+	"github.com/goreleaser/quill/quill/pki"
 )
 
 // TODO: useful for debugging, but doest test anything
 func Test_debugRequirementsHash(t *testing.T) {
-
 	tests := []struct {
 		name       string
 		binaryPath string
@@ -95,7 +94,7 @@ func Test_debugRequirementsHash(t *testing.T) {
 			f, err := os.Open(tt.binaryPath)
 			require.NoError(t, err)
 
-			var buff = make([]byte, tt.length)
+			buff := make([]byte, tt.length)
 			length, err := f.ReadAt(buff, tt.offset)
 			require.NoError(t, err)
 			assert.Equal(t, tt.length, length)
@@ -103,9 +102,9 @@ func Test_debugRequirementsHash(t *testing.T) {
 			b64Buff := make([]byte, base64.StdEncoding.EncodedLen(len(buff)))
 			base64.StdEncoding.Encode(b64Buff, buff)
 
-			//t.Logf("req blob:        %x", buff)
-			//t.Logf("req blob base64: %s", b64Buff)
-			//t.Logf("req start:       %x", buff[32:])
+			// t.Logf("req blob:        %x", buff)
+			// t.Logf("req blob base64: %s", b64Buff)
+			// t.Logf("req start:       %x", buff[32:])
 			description, err := types.ParseRequirements(bytes.NewReader(buff), types.Requirements{
 				Type:   types.DesignatedRequirementType,
 				Offset: 32,
@@ -117,7 +116,7 @@ func Test_debugRequirementsHash(t *testing.T) {
 			require.NoError(t, err)
 			assert.Equal(t, tt.length, length)
 
-			//t.Logf("%x", tt.hasher.Sum(nil))
+			// t.Logf("%x", tt.hasher.Sum(nil))
 		})
 	}
 }
@@ -143,7 +142,6 @@ func Test_debugRequirementsHash(t *testing.T) {
 //}
 
 func Test_buildRequirementStatements(t *testing.T) {
-
 	tests := []struct {
 		name            string
 		id              string
@@ -295,7 +293,6 @@ func Test_buildRequirementStatements(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			by, err := buildRequirementStatements(tt.id, tt.signingMaterial)
 			require.NoError(t, err)
 			assert.Equal(t, tt.wantBytes, hex.EncodeToString(by))

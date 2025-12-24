@@ -13,7 +13,7 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/klauspost/compress/zip"
 
-	"github.com/anchore/quill/quill/macho"
+	"github.com/goreleaser/quill/quill/macho"
 )
 
 type Payload struct {

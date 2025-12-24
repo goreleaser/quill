@@ -1,4 +1,4 @@
-module github.com/anchore/quill
+module github.com/goreleaser/quill
 
 go 1.24.9
 

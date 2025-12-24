@@ -5,8 +5,8 @@ import (
 
 	cms "github.com/github/smimesign/ietf-cms"
 
-	"github.com/anchore/quill/quill/macho"
-	"github.com/anchore/quill/quill/pki"
+	"github.com/goreleaser/quill/quill/macho"
+	"github.com/goreleaser/quill/quill/pki"
 )
 
 func generateCMS(signingMaterial pki.SigningMaterial, cdBlob *macho.Blob) (*macho.Blob, error) {

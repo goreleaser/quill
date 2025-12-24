@@ -13,12 +13,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/anchore/quill/internal/test"
-	"github.com/anchore/quill/quill/macho"
+	"github.com/goreleaser/quill/internal/test"
+	"github.com/goreleaser/quill/quill/macho"
 )
 
 func Test_newCodeDirectoryFromMacho(t *testing.T) {
-
 	tests := []struct {
 		name             string
 		id               string
@@ -30,7 +29,6 @@ func Test_newCodeDirectoryFromMacho(t *testing.T) {
 		expectedCD       macho.CodeDirectory
 		expectedCDHashes []string
 	}{
-
 		{
 			name:             "for a single, adhoc signed binary",
 			id:               "hello_adhoc_signed-5555494491eaf6896e74321ba4d59f24e0bfa162", // when regenerating the fixtures, this could change
@@ -148,7 +146,6 @@ func chunk(slice []byte, chunkSize int) [][]byte {
 }
 
 func Test_generateCodeDirectory(t *testing.T) {
-
 	tests := []struct {
 		name             string
 		id               string
@@ -160,7 +157,6 @@ func Test_generateCodeDirectory(t *testing.T) {
 		cdHash           string
 		cdBytes          string
 	}{
-
 		{
 			name:             "for a single, adhoc signed binary",
 			id:               "hello_adhoc_signed-5555494491eaf6896e74321ba4d59f24e0bfa162", // when regenerating the fixtures, this could change

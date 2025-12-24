@@ -10,8 +10,8 @@ import (
 	blacktopMacho "github.com/blacktop/go-macho"
 
 	macholibre "github.com/anchore/go-macholibre"
-	"github.com/anchore/quill/internal/utils"
-	"github.com/anchore/quill/quill/macho"
+	"github.com/goreleaser/quill/internal/utils"
+	"github.com/goreleaser/quill/quill/macho"
 )
 
 func NewFile(binPath string) ([]*File, error) {

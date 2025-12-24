@@ -4,7 +4,7 @@ import (
 	"crypto/x509"
 	"fmt"
 
-	"github.com/anchore/quill/quill/pki/load"
+	"github.com/goreleaser/quill/quill/pki/load"
 )
 
 var _ Store = (*Collection)(nil)

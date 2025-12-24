@@ -3,7 +3,7 @@ package cli
 import (
 	"testing"
 
-	"github.com/anchore/quill/test/trait"
+	"github.com/goreleaser/quill/test/trait"
 )
 
 func Test_VersionCommand(t *testing.T) {

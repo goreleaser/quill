@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 
-	"github.com/anchore/quill/quill/pki/load"
+	"github.com/goreleaser/quill/quill/pki/load"
 )
 
 type TokenConfig struct {

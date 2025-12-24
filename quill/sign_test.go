@@ -6,11 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/anchore/quill/internal/test"
+	"github.com/goreleaser/quill/internal/test"
 )
 
 func TestSign(t *testing.T) {
-
 	type args struct {
 		id                        string
 		path                      string
@@ -210,7 +209,6 @@ func TestSign(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			if tt.wantSignConfigErr == nil {
 				tt.wantSignConfigErr = require.NoError
 			}
@@ -222,7 +220,7 @@ func TestSign(t *testing.T) {
 			}
 			cfg.WithIdentity(tt.args.id)
 			// note: can't do this in snapshot testing
-			//cfg.WithTimestampServer("http://timestamp.apple.com/ts01")
+			// cfg.WithTimestampServer("http://timestamp.apple.com/ts01")
 
 			if tt.wantSignErr == nil {
 				tt.wantSignErr = require.NoError
@@ -243,7 +241,6 @@ func TestSign(t *testing.T) {
 }
 
 func TestIsSigned(t *testing.T) {
-
 	tests := []struct {
 		name     string
 		path     string
@@ -274,7 +271,6 @@ func TestIsSigned(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			if tt.wantErr == nil {
 				tt.wantErr = require.NoError
 			}

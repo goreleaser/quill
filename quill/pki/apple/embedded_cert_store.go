@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/anchore/quill/quill/pki/certchain"
-	"github.com/anchore/quill/quill/pki/load"
+	"github.com/goreleaser/quill/quill/pki/certchain"
+	"github.com/goreleaser/quill/quill/pki/load"
 )
 
 //go:generate go run ./internal/generate/

@@ -8,11 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/anchore/quill/internal/test"
+	"github.com/goreleaser/quill/internal/test"
 )
 
 func TestFile_HasCodeSigningCmd(t *testing.T) {
-
 	tests := []struct {
 		name          string
 		binaryPath    string
@@ -53,7 +52,6 @@ func TestFile_HasCodeSigningCmd(t *testing.T) {
 }
 
 func TestFile_CodeSigningCmd(t *testing.T) {
-
 	tests := []struct {
 		name       string
 		binaryPath string
@@ -123,7 +121,6 @@ func TestFile_CodeSigningCmd(t *testing.T) {
 }
 
 func TestFile_HashPages(t *testing.T) {
-
 	tests := []struct {
 		name          string
 		binaryPath    string
@@ -211,7 +208,6 @@ func TestFile_HashPages(t *testing.T) {
 }
 
 func TestFile_UpdateCodeSigningCmdDataSize(t *testing.T) {
-
 	tests := []struct {
 		name       string
 		binaryPath string
@@ -242,7 +238,6 @@ func TestFile_UpdateCodeSigningCmdDataSize(t *testing.T) {
 }
 
 func TestFile_AddDummyCodeSigningCmd(t *testing.T) {
-
 	tests := []struct {
 		name       string
 		binaryPath string
@@ -285,7 +280,6 @@ func TestFile_AddDummyCodeSigningCmd(t *testing.T) {
 }
 
 func TestFile_UpdateSegmentHeader(t *testing.T) {
-
 	tests := []struct {
 		name       string
 		binaryPath string
@@ -321,7 +315,6 @@ func TestFile_UpdateSegmentHeader(t *testing.T) {
 }
 
 func TestFile_HashCD(t *testing.T) {
-
 	tests := []struct {
 		name        string
 		binaryPath  string

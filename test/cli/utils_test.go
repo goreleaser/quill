@@ -16,14 +16,16 @@ import (
 
 	"github.com/gookit/color"
 
-	"github.com/anchore/quill/test/trait"
+	"github.com/goreleaser/quill/test/trait"
 )
 
 const defaultShowOutput = false
 
-var showStdout = flag.Bool("stdout", defaultShowOutput, "Show command stdout")
-var showStderr = flag.Bool("stderr", defaultShowOutput, "Show command stderr")
-var detail = flag.Bool("detail", defaultShowOutput, "Show test detail output")
+var (
+	showStdout = flag.Bool("stdout", defaultShowOutput, "Show command stdout")
+	showStderr = flag.Bool("stderr", defaultShowOutput, "Show command stderr")
+	detail     = flag.Bool("detail", defaultShowOutput, "Show test detail output")
+)
 
 type runConfig struct {
 	commentary string
@@ -99,14 +101,14 @@ func runQuill(t testing.TB, command string, cfgs ...runConfig) (string, string, 
 
 func testTaskInfo(t testing.TB, tsk string) {
 	if *detail {
-		//t.Log(tsk)
+		// t.Log(tsk)
 		fmt.Printf("    %s %s\n", color.Bold.Render(color.Blue.Render("[test log]")), color.OpItalic.Render(color.Blue.Render(tsk)))
 	}
 }
 
 func testTaskError(t testing.TB, err string) {
 	if *detail {
-		//t.Log(tsk)
+		// t.Log(tsk)
 		fmt.Printf("    %s %s\n", color.Bold.Render(color.Red.Render("[test ERROR]")), color.OpItalic.Render(color.Red.Render(err)))
 	}
 }

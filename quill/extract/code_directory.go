@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/anchore/quill/quill/macho"
+	"github.com/goreleaser/quill/quill/macho"
 )
 
 type CodeDirectoryDetails struct {

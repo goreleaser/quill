@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/anchore/quill/quill/notary"
+	"github.com/goreleaser/quill/quill/notary"
 )
 
 type NotarizeConfig struct {

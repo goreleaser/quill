@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-restruct/restruct"
 
-	"github.com/anchore/quill/quill/macho"
+	"github.com/goreleaser/quill/quill/macho"
 )
 
 func generateEntitlements(h hash.Hash, entitlementsXML string) (*SpecialSlot, error) {
