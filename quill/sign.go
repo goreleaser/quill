@@ -80,8 +80,7 @@ func Sign(cfg SigningConfig) error {
 		return signMultiarchBinary(cfg)
 	}
 
-	err = signSingleBinary(cfg)
-	return err
+	return signSingleBinary(cfg)
 }
 
 //nolint:funlen
@@ -163,12 +162,11 @@ func signSingleBinary(cfg SigningConfig) error {
 
 	// (patch) make certain offset and size references to the superblob are finalized in the binary
 	if err = sign.UpdateSuperBlobOffsetReferences(m, uint64(len(sbBytes))); err != nil {
-		return nil
+		return err
 	}
 
 	// second pass: now that all of the sizing is right, let's do it again with the final contents (replacing the hashes and signature)
-	_, sbBytes, err = sign.GenerateSigningSuperBlob(cfg.Identity, m, cfg.SigningMaterial, entitlementsXML, superBlobSize)
-	if err != nil {
+	if _, sbBytes, err = sign.GenerateSigningSuperBlob(cfg.Identity, m, cfg.SigningMaterial, entitlementsXML, superBlobSize); err != nil {
 		return fmt.Errorf("failed to add signing data on pass=2: %w", err)
 	}
 
