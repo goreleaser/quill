@@ -7,7 +7,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 
-	"github.com/anchore/quill/internal/log"
 	"github.com/anchore/quill/quill/pki/load"
 )
 
@@ -45,8 +44,6 @@ func NewSignedToken(cfg TokenConfig) (string, error) {
 }
 
 func loadPrivateKey(path string) (*ecdsa.PrivateKey, error) {
-	log.Debug("loading private key for notary")
-
 	keyBytes, err := load.BytesFromFileOrEnv(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to load JWT private key bytes: %w", err)

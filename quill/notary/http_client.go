@@ -6,8 +6,6 @@ import (
 	"io"
 	"net/http"
 	"time"
-
-	"github.com/anchore/quill/internal/log"
 )
 
 type httpClient struct {
@@ -48,7 +46,6 @@ func (s httpClient) post(ctx context.Context, endpoint string, body io.Reader) (
 }
 
 func (s httpClient) do(request *http.Request) (*http.Response, error) {
-	log.Tracef("http %s %s", request.Method, request.URL)
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
 	return s.client.Do(request)
 }

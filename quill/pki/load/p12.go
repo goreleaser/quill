@@ -7,8 +7,6 @@ import (
 	"fmt"
 
 	"software.sslmate.com/src/go-pkcs12"
-
-	"github.com/anchore/quill/internal/log"
 )
 
 var ErrNeedPassword = errors.New("need password to decode file")
@@ -28,7 +26,6 @@ func P12(path, password string) (*P12Contents, error) {
 	key, cert, certs, err := pkcs12.DecodeChain(by, password)
 	if err != nil {
 		if errors.Is(err, pkcs12.ErrIncorrectPassword) && password == "" {
-			log.Debug("p12 file requires a password but none provided")
 			return nil, ErrNeedPassword
 		}
 		return nil, fmt.Errorf("unable to decode p12 file: %w", err)

@@ -13,7 +13,6 @@ import (
 	"github.com/go-restruct/restruct"
 
 	macholibre "github.com/anchore/go-macholibre"
-	"github.com/anchore/quill/internal/log"
 )
 
 const (
@@ -77,7 +76,7 @@ func (m *File) refresh(withWrite bool) error {
 		flags = os.O_RDWR
 	}
 
-	f, err := os.OpenFile(m.path, flags, 0755)
+	f, err := os.OpenFile(m.path, flags, 0o755)
 	if err != nil {
 		return fmt.Errorf("unable to open macho file: %w", err)
 	}
@@ -148,8 +147,6 @@ func (m *File) hasRoomForNewCmd() bool {
 }
 
 func (m *File) AddEmptyCodeSigningCmd() (err error) {
-	log.Trace("adding empty code signing loader command")
-
 	if m.HasCodeSigningCmd() {
 		return fmt.Errorf("loader command already exists, cannot add another")
 	}
@@ -194,8 +191,6 @@ func (m *File) AddEmptyCodeSigningCmd() (err error) {
 }
 
 func (m *File) UpdateCodeSigningCmdDataSize(newSize int) (err error) {
-	log.WithFields("size", newSize).Trace("updating code signing loader command")
-
 	cmd, offset, err := m.CodeSigningCmd()
 	if err != nil {
 		return fmt.Errorf("unable to update existing signing loader command: %w", err)
@@ -217,7 +212,7 @@ func (m *File) UpdateSegmentHeader(h macho.SegmentHeader) (err error) {
 		return fmt.Errorf("unable to update segment header: %w", err)
 	}
 
-	var offset = m.firstCmdOffset()
+	offset := m.firstCmdOffset()
 	for _, l := range m.Loads {
 		if s, ok := l.(*macho.Segment); ok {
 			if s.Name == h.Name {
@@ -257,17 +252,14 @@ func (m *File) RemoveSigningContent() error {
 		return fmt.Errorf("unable to pack modified macho header: %w", err)
 	}
 
-	log.Trace("updating the file header to remove references to the loader command")
 	if err = m.Patch(headerBytes, len(headerBytes), 0); err != nil {
 		return fmt.Errorf("unable to patch macho header: %w", err)
 	}
 
-	log.Trace("overwrite the signing loader command with zeros")
 	if err := m.Patch(make([]byte, cmd.Size), int(cmd.Size), existingOffset); err != nil {
 		return fmt.Errorf("unable to remove signing loader command: %w", err)
 	}
 
-	log.Trace("overwrite the signing superblob with zeros")
 	if err := m.Patch(make([]byte, cmd.DataSize), int(cmd.DataSize), uint64(cmd.DataOffset)); err != nil {
 		return fmt.Errorf("unable to remove superblob from binary: %w", err)
 	}
@@ -293,7 +285,7 @@ func (m *File) isSigningCommandLastLoader() bool {
 }
 
 func (m *File) CodeSigningCmd() (*CodeSigningCommand, uint64, error) {
-	var offset = m.firstCmdOffset()
+	offset := m.firstCmdOffset()
 	for _, l := range m.Loads {
 		data := l.Raw()
 		cmd := m.ByteOrder.Uint32(data)
@@ -330,8 +322,6 @@ func (m *File) HashPages(hasher hash.Hash) (hashes [][]byte, err error) {
 	}
 
 	hashes, err = hashChunks(hasher, PageSize, b)
-
-	log.WithFields("pages", len(hashes), "offset", int64(cmd.DataOffset)).Trace("hashed pages")
 
 	return hashes, err
 }

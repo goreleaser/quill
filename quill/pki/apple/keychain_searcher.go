@@ -7,7 +7,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/anchore/quill/internal/log"
 	"github.com/anchore/quill/quill/pki/certchain"
 	"github.com/anchore/quill/quill/pki/load"
 )
@@ -40,7 +39,6 @@ func (k keychainSearcher) CertificatesByCN(commonName string) ([]*x509.Certifica
 
 func searchKeychain(certCNSearch, keychainPath string) (string, error) {
 	if !isMacOS() {
-		log.Warn("searching the keychain is only supported on macOS. Skipping...")
 		return "", nil
 	}
 
@@ -58,8 +56,6 @@ func isMacOS() bool {
 func run(args ...string) (string, error) {
 	baseCmd := args[0]
 	cmdArgs := args[1:]
-
-	log.Tracef("running command: %q", strings.Join(args, " "))
 
 	cmd := exec.Command(baseCmd, cmdArgs...)
 	out, err := cmd.Output()

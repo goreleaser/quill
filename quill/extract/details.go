@@ -8,7 +8,6 @@ import (
 
 	blacktopMacho "github.com/blacktop/go-macho"
 
-	"github.com/anchore/quill/internal/log"
 	"github.com/anchore/quill/quill/macho"
 )
 
@@ -58,7 +57,6 @@ func ParseDetails(m File) Details {
 func getSignatures(m File) []SignatureDetails {
 	bd, err := getBlobDetails(m)
 	if err != nil {
-		log.Warn("unable to get blob details for file: %v", err)
 	}
 
 	superBlob := m.blacktopFile.CodeSignature()
@@ -66,7 +64,6 @@ func getSignatures(m File) []SignatureDetails {
 	// TODO: support multiple CDs
 	cdBytes, err := m.internalFile.CDBytes(macho.SigningOrder, 0)
 	if err != nil {
-		log.Warn("unable to get code directory: %v", err)
 	}
 
 	sd := buildSignatureDetails(superBlob, cdBytes)
@@ -78,7 +75,6 @@ func getSignatures(m File) []SignatureDetails {
 func getBlobDetails(m File) (BlobDetails, error) {
 	b, err := m.internalFile.CMSBlobBytes(macho.SigningOrder)
 	if err != nil {
-		log.Warn("unable to find any signatures: %v", err)
 		return BlobDetails{}, err
 	}
 

@@ -17,8 +17,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-
-	"github.com/anchore/quill/internal/log"
 )
 
 type api interface {
@@ -43,7 +41,6 @@ func NewAPIClient(token string, httpTimeout time.Duration) *APIClient {
 
 func (s APIClient) submissionRequest(ctx context.Context, request submissionRequest) (*submissionResponse, error) {
 	// TODO: tie into context
-	log.WithFields("name", request.SubmissionName).Trace("submitting binary to Apple for notarization")
 
 	requestBytes, err := json.Marshal(request)
 	if err != nil {
@@ -65,7 +62,6 @@ func (s APIClient) submissionRequest(ctx context.Context, request submissionRequ
 
 func (s APIClient) uploadBinary(ctx context.Context, response submissionResponse, bin Payload) error {
 	attrs := response.Data.Attributes
-	log.WithFields("bucket", attrs.Bucket, "object", attrs.Object).Trace("uploading binary to S3")
 
 	// create AWS config with static credentials
 	cfg, err := config.LoadDefaultConfig(ctx,

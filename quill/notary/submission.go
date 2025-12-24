@@ -5,8 +5,6 @@ import (
 	"crypto/rand"
 	"fmt"
 	"path/filepath"
-
-	"github.com/anchore/quill/internal/log"
 )
 
 type SubmissionStatus string
@@ -70,8 +68,6 @@ func (s *Submission) Start(ctx context.Context) error {
 		return fmt.Errorf("submission already started")
 	}
 
-	log.WithFields("name", s.name).Debug("starting submission")
-
 	if s.binary == nil {
 		return fmt.Errorf("unable to start Submission without a binary")
 	}
@@ -83,27 +79,20 @@ func (s *Submission) Start(ctx context.Context) error {
 			SubmissionName: s.name,
 		},
 	)
-
 	if err != nil {
 		return err
 	}
 
 	s.id = response.Data.ID
 
-	log.WithFields("id", s.id, "name", s.name).Trace("received submission id")
-
 	return s.api.uploadBinary(ctx, *response, *s.binary)
 }
 
 func (s Submission) Status(ctx context.Context) (SubmissionStatus, error) {
-	log.WithFields("id", s.id).Trace("checking submission status")
-
 	response, err := s.api.submissionStatusRequest(ctx, s.id)
 	if err != nil {
 		return "", err
 	}
-
-	log.WithFields("status", fmt.Sprintf("%q", response.Data.Attributes.Status), "id", s.id).Debug("submission status")
 
 	switch response.Data.Attributes.Status {
 	case "In Progress":

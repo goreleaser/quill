@@ -11,7 +11,6 @@ import (
 
 	"github.com/go-restruct/restruct"
 
-	"github.com/anchore/quill/internal/log"
 	"github.com/anchore/quill/quill/macho"
 )
 
@@ -103,8 +102,6 @@ func newSpecialSlotHashWriter(specialSlots []SpecialSlot) (*SpecialSlotHashWrite
 		w.slots[slotType] = slot
 	}
 
-	log.Debugf("SpecialSlotHashWriter: %d special slots", w.maxSlotType)
-
 	return &w, nil
 }
 
@@ -114,13 +111,11 @@ func (w *SpecialSlotHashWriter) Write(buffer *bytes.Buffer) error {
 	w.totalBytesWritten = 0
 
 	for i := w.maxSlotType; i > 0; i-- {
-		log.Debugf("SpecialSlotHashWriter: writing slot %d", i)
 		hashBytes := nullHashBytes
 		slot, hasSlot := w.slots[i]
 		if hasSlot {
 			hashBytes = slot.HashBytes
 		} else {
-			log.Debugf("SpecialSlotHashWriter: slot %d is empty", i)
 		}
 		written, err := buffer.Write(hashBytes)
 		if err != nil {

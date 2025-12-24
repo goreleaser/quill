@@ -8,7 +8,6 @@ import (
 
 	"github.com/go-restruct/restruct"
 
-	"github.com/anchore/quill/internal/log"
 	"github.com/anchore/quill/quill/macho"
 	"github.com/anchore/quill/quill/pki"
 )
@@ -64,7 +63,6 @@ const (
 func generateRequirements(id string, h hash.Hash, signingMaterial pki.SigningMaterial) (*SpecialSlot, error) {
 	var reqBytes []byte
 	if signingMaterial.Signer == nil {
-		log.Trace("skipping adding designated requirement because no signer was found")
 		reqBytes = []byte{0, 0, 0, 0}
 	} else {
 		req, err := newRequirements(id, signingMaterial)
@@ -113,7 +111,6 @@ func newRequirements(id string, signingMaterial pki.SigningMaterial) (*macho.Req
 	offsetFromStartOfBlob := uint32(unsafe.Sizeof(macho.BlobHeader{}) + unsafe.Sizeof(macho.RequirementsHeader{}))
 
 	return &macho.Requirements{
-
 		RequirementsHeader: macho.RequirementsHeader{
 			Count:  1, // we only support a single requirement at this time
 			Type:   macho.DesignatedRequirementType,

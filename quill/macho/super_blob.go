@@ -2,8 +2,6 @@ package macho
 
 import (
 	"unsafe"
-
-	"github.com/anchore/quill/internal/log"
 )
 
 // Definition From: https://github.com/Apple-FOSS-Mirror/Security/blob/5bcad85836c8bbb383f660aaf25b555a805a48e4/OSX/sec/Security/Tool/codesign.c#L53-L89
@@ -64,7 +62,7 @@ func (s *SuperBlob) Finalize(paddingTarget int) {
 
 	paddingSize := PageSize * 4
 	lengthWithPadding := int(s.Length) + paddingSize
-	lenBeforeCorrection := s.Length
+	// lenBeforeCorrection := s.Length
 
 	var padCorrection int
 	if paddingTarget > 0 {
@@ -73,6 +71,4 @@ func (s *SuperBlob) Finalize(paddingTarget int) {
 
 	s.Pad = make([]byte, (PageSize*4)+padCorrection)
 	s.Length += uint32(len(s.Pad))
-
-	log.WithFields("bytes", s.Length, "correction", padCorrection, "target", paddingTarget, "bytes-before-correction", lenBeforeCorrection).Trace("superblob size")
 }

@@ -11,8 +11,6 @@ import (
 	cms "github.com/github/smimesign/ietf-cms"
 	"github.com/github/smimesign/ietf-cms/oid"
 	"github.com/github/smimesign/ietf-cms/protocol"
-
-	"github.com/anchore/quill/internal/log"
 )
 
 type SignatureDetails struct {
@@ -60,25 +58,21 @@ type CMSValidationDetails struct {
 func buildSignatureDetails(cs *blacktopMacho.CodeSignature, cdBytes []byte) (sd SignatureDetails) {
 	ci, err := protocol.ParseContentInfo(cs.CMSSignature)
 	if err != nil {
-		log.Debugf("unable to parse content info from signature: %v", err)
 	}
 
 	// CI is never nil, but the SignedData may be nil
 	psd, err := ci.SignedDataContent()
 	if err != nil {
-		log.Debugf("unable to parse signed data from content: %v", err)
 	}
 
 	signers := buildSigners(psd)
 	et := findEarliestSigningTime(psd)
 	certs, err := buildCerts(psd)
 	if err != nil {
-		log.Debugf("unable to build certificates: %v", err)
 	}
 
 	signedData, err := cms.ParseSignedData(cs.CMSSignature)
 	if err != nil {
-		log.Debugf("unable to parse signed data: %v", err)
 	}
 
 	verifiedCerts, cmsValid, err := buildVerifiedCerts(signedData, cdBytes, et)
@@ -117,7 +111,6 @@ func buildVerifiedCerts(signedData *cms.SignedData, cdBytes []byte, earliestSign
 
 func buildSigners(psd *protocol.SignedData) []Signer {
 	if psd == nil {
-		log.Debug("signed data is nil cannot build signers")
 		return []Signer{}
 	}
 	var signers []Signer
@@ -151,12 +144,10 @@ func buildSigners(psd *protocol.SignedData) []Signer {
 
 func buildCerts(psd *protocol.SignedData) ([]Certificate, error) {
 	if psd == nil {
-		log.Debug("signed data is nil cannot build certificates")
 		return []Certificate{}, nil
 	}
 	parsedCerts, err := psd.X509Certificates()
 	if err != nil {
-		log.Warn("unable to parse x509 certificates for signed data: %v", err)
 		return []Certificate{}, err
 	}
 
@@ -173,15 +164,13 @@ func buildCerts(psd *protocol.SignedData) ([]Certificate, error) {
 
 func findEarliestSigningTime(psd *protocol.SignedData) time.Time {
 	// it seems that the timestamp set is based on the sign time, not any certificate information
-	var earliestTime = time.Now()
+	earliestTime := time.Now()
 	if psd == nil {
-		log.Debug("signed data is nil cannot find earliest signing time")
 		return earliestTime
 	}
 	for _, s := range psd.SignerInfos {
 		t, err := s.GetSigningTimeAttribute()
 		if err != nil {
-			log.Warn("unable to get signing time attribute: %v", err)
 			continue
 		}
 		if earliestTime.After(t) {

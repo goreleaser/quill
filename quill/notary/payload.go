@@ -13,7 +13,6 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/klauspost/compress/zip"
 
-	"github.com/anchore/quill/internal/log"
 	"github.com/anchore/quill/quill/macho"
 )
 
@@ -39,10 +38,7 @@ func NewPayload(path string) (*Payload, error) {
 }
 
 func prepareZip(path string) (*Payload, error) {
-	log.Trace("using provided zip as payload")
-
 	f, err := os.Open(path)
-
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +65,6 @@ func prepareZip(path string) (*Payload, error) {
 }
 
 func prepareBinary(path string) (*Payload, error) {
-	log.Trace("zipping up binary payload")
-
 	// verify that we're opening a macho file (not a zip of the binary or anything else)
 	isMacho, err := macho.IsMachoFile(path)
 	if err != nil {
@@ -92,12 +86,10 @@ func prepareBinary(path string) (*Payload, error) {
 
 	h := sha256.New()
 
-	n, err := io.Copy(h, bytes.NewReader(zippedBinary.Bytes()))
+	_, err = io.Copy(h, bytes.NewReader(zippedBinary.Bytes()))
 	if err != nil {
 		return nil, err
 	}
-
-	log.WithFields("bytes", n, "digest", hex.EncodeToString(h.Sum(nil))).Trace("hashed zip")
 
 	if zippedBinary.Len() == 0 {
 		return nil, fmt.Errorf("zip file is empty")
@@ -135,14 +127,11 @@ func createZip(name string, reader io.Reader) (*bytes.Buffer, error) {
 		return nil, err
 	}
 
-	log.WithFields("bytes", buf.Len(), "name", name).Trace("wrote binary payload to zip")
-
 	return &buf, nil
 }
 
 func fileContentType(path string) (string, error) {
 	f, err := os.Open(path)
-
 	if err != nil {
 		return "", err
 	}

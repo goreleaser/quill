@@ -6,8 +6,6 @@ import (
 	"fmt"
 
 	"github.com/scylladb/go-set/strset"
-
-	"github.com/anchore/quill/internal/log"
 )
 
 // Find will look for the full certificate chain for the given certificate from the given cert store.
@@ -44,8 +42,6 @@ func Find(store Store, cert *x509.Certificate) ([]*x509.Certificate, error) {
 	for !nextCNs.IsEmpty() {
 		parentCN := nextCNs.Pop()
 
-		log.WithFields("cn", fmt.Sprintf("%q", parentCN)).Debug("querying certificate store")
-
 		parentCerts, err := store.CertificatesByCN(parentCN)
 		if err != nil {
 			return nil, fmt.Errorf("unable to get certificate chain cert CN=%q (from keychain or embedded quill store): %w", parentCN, err)
@@ -58,12 +54,8 @@ func Find(store Store, cert *x509.Certificate) ([]*x509.Certificate, error) {
 			return certs, fmt.Errorf("no certificates found for CN=%q", parentCN)
 		}
 
-		log.WithFields("cn", fmt.Sprintf("%q", parentCN), "count", len(parentCerts)).Trace("certificates found")
-
 		for _, c := range parentCerts {
 			currentKeyID := hex.EncodeToString(c.SubjectKeyId)
-
-			log.WithFields("cn", fmt.Sprintf("%q", c.Issuer.CommonName), "key-id", currentKeyID).Trace("capturing certificate in chain")
 
 			if visitedCerts.Has(string(c.Raw)) {
 				continue

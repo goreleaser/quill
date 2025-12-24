@@ -3,12 +3,8 @@ package quill
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
-	"github.com/anchore/quill/internal/bus"
-	"github.com/anchore/quill/internal/log"
-	"github.com/anchore/quill/quill/event"
 	"github.com/anchore/quill/quill/notary"
 )
 
@@ -80,29 +76,11 @@ Apple's notary service requires you to adopt the following protections:
 */
 
 func Notarize(path string, cfg NotarizeConfig) (notary.SubmissionStatus, error) {
-	log.WithFields("binary", path).Info("notarizing binary")
-
-	mon := bus.PublishTask(
-		event.Title{
-			Default:      "Notarize binary",
-			WhileRunning: "Notarizing binary",
-			OnSuccess:    "Notarized binary",
-		},
-		path,
-		-1,
-	)
-
-	defer mon.SetCompleted()
-
-	mon.Stage.Current = "validating binary"
-
 	if isSigned, err := IsSigned(path); err != nil {
 		return "", fmt.Errorf("unable to determine if binary is signed: %+v", err)
 	} else if !isSigned {
 		return "", fmt.Errorf("binary is not signed thus will not pass notarization")
 	}
-
-	mon.Stage.Current = "initializing client"
 
 	token, err := notary.NewSignedToken(cfg.TokenConfig)
 	if err != nil {
@@ -111,14 +89,10 @@ func Notarize(path string, cfg NotarizeConfig) (notary.SubmissionStatus, error) 
 
 	a := notary.NewAPIClient(token, cfg.HTTPTimeout)
 
-	mon.Stage.Current = "processing payload"
-
 	bin, err := notary.NewPayload(path)
 	if err != nil {
 		return "", err
 	}
-
-	mon.Stage.Current = "submitting"
 
 	sub := notary.NewSubmission(a, bin)
 
@@ -127,15 +101,12 @@ func Notarize(path string, cfg NotarizeConfig) (notary.SubmissionStatus, error) 
 	}
 
 	if !cfg.StatusConfig.Wait {
-		log.WithFields("id", sub.ID()).Infof("Submission started but configured to not wait for the results")
 		return "", nil
 	}
 
-	statusCfg := cfg.StatusConfig.WithProgress(&mon.Stage)
+	statusCfg := cfg.StatusConfig
 
-	status, err := notary.PollStatus(context.Background(), sub, *statusCfg)
-
-	mon.Stage.Current = strings.ToLower(fmt.Sprintf("status %q", string(status)))
+	status, err := notary.PollStatus(context.Background(), sub, statusCfg)
 
 	return status, err
 }

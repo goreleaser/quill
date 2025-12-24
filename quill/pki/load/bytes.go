@@ -6,8 +6,6 @@ import (
 	"io"
 	"os"
 	"strings"
-
-	"github.com/anchore/quill/internal/log"
 )
 
 func BytesFromFileOrEnv(path string) ([]byte, error) {
@@ -18,8 +16,6 @@ func BytesFromFileOrEnv(path string) ([]byte, error) {
 			return nil, fmt.Errorf("key path has 'env:' prefix, but cannot parse env variable: %q", path)
 		}
 		envVar := fields[1]
-
-		log.WithFields("var", envVar).Trace("loading bytes from environment")
 
 		value := os.Getenv(envVar)
 		if value == "" {
@@ -36,7 +32,6 @@ func BytesFromFileOrEnv(path string) ([]byte, error) {
 	// comes from the config...
 
 	if _, err := os.Stat(path); err != nil {
-		log.Trace("using bytes from config")
 
 		decodedKey, err := base64.StdEncoding.DecodeString(path)
 		if err != nil {
@@ -47,8 +42,6 @@ func BytesFromFileOrEnv(path string) ([]byte, error) {
 	}
 
 	// comes from a file...
-
-	log.WithFields("path", path).Trace("loading bytes from file")
 
 	f, err := os.Open(path)
 	if err != nil {

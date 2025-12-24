@@ -4,12 +4,9 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-
-	"github.com/anchore/quill/internal/log"
 )
 
 func Certificates(path string) ([]*x509.Certificate, error) {
-	log.WithFields("path", path).Trace("reading certificate(s)")
 	certPEM, err := BytesFromFileOrEnv(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read signing certificate: %w", err)

@@ -6,13 +6,9 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-
-	"github.com/anchore/quill/internal/log"
 )
 
 func PrivateKey(path string, password string) (crypto.PrivateKey, error) {
-	log.Debug("loading private key")
-
 	b, err := BytesFromFileOrEnv(path)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read private key: %w", err)
@@ -42,15 +38,12 @@ func PrivateKey(path string, password string) (crypto.PrivateKey, error) {
 		// This method of encrypting the key isn't recommended anymore.
 		// See https://github.com/golang/go/issues/8860 for more discussion
 
-		log.Trace("decrypting private key")
-
 		//nolint: staticcheck // we have no other alternatives
 		privPemBytes, err = x509.DecryptPEMBlock(pemObj, []byte(password))
 		if err != nil {
 			return nil, fmt.Errorf("unable to decrypt PEM block: %w", err)
 		}
 	} else {
-		log.Trace("using unencrypted private key")
 		privPemBytes = pemObj.Bytes
 	}
 
