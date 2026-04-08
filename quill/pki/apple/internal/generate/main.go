@@ -10,18 +10,44 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
+
+	"github.com/goreleaser/quill/internal/urlvalidate"
+	"github.com/goreleaser/quill/internal/utils"
 )
 
 const (
-	CertsDir   = "certs"
-	AppleCaURL = "https://www.apple.com/certificateauthority/"
+	CertsDir           = "certs"
+	AppleCaURL         = "https://www.apple.com/certificateauthority/"
+	maxCertificateSize = 1 * 1024 * 1024 // 1 MB for certificates
 )
 
 type Link struct {
 	Name string
 	URL  string
+}
+
+// urlValidator validates URLs for fetching Apple resources.
+var urlValidator = urlvalidate.New(urlvalidate.DefaultConfig())
+
+// httpClient is a shared HTTP client with redirect validation to prevent SSRF attacks.
+var httpClient = &http.Client{
+	Timeout: 30 * time.Second,
+	CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		warning, err := urlValidator.Validate(req.URL.String())
+		if err != nil {
+			return fmt.Errorf("redirect to untrusted URL: %w", err)
+		}
+		if warning != "" {
+			log.Printf("warning: redirect URL: %s", warning)
+		}
+		if len(via) >= 10 {
+			return fmt.Errorf("too many redirects")
+		}
+		return nil
+	},
 }
 
 type AppleCALinks struct {
@@ -85,12 +111,21 @@ func mkdirs(dir string) error {
 	return nil
 }
 
-func downloadCertTo(url, dest string) error {
+func downloadCertTo(certURL, dest string) error {
+	// validate URL before downloading to prevent SSRF attacks
+	warning, err := urlValidator.Validate(certURL)
+	if err != nil {
+		return fmt.Errorf("invalid certificate URL: %w", err)
+	}
+	if warning != "" {
+		log.Printf("warning: %s", warning)
+	}
+
 	if err := mkdirs(dest); err != nil {
 		return err
 	}
 
-	by, err := download(url)
+	by, err := download(certURL)
 	if err != nil {
 		return err
 	}
@@ -118,7 +153,7 @@ func downloadCertTo(url, dest string) error {
 		return fmt.Errorf("unknown certificate format")
 	}
 
-	basename := path.Base(url)
+	basename := path.Base(certURL)
 	basename = basename[:len(basename)-len(path.Ext(basename))] + suffix
 	filepath := path.Join(dest, basename)
 
@@ -146,13 +181,14 @@ func convertDERToPEM(der []byte) []byte {
 	return pem.EncodeToMemory(block)
 }
 
-func download(url string) ([]byte, error) {
-	resp, err := http.Get(url) //nolint:gosec // G107 is a false positive since the URL is a constant
+func download(u string) ([]byte, error) {
+	resp, err := httpClient.Get(u)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	return io.ReadAll(resp.Body)
+	// limit response size to prevent memory exhaustion from unexpectedly large responses
+	return utils.ReadAllLimited(resp.Body, maxCertificateSize)
 }
 
 func findCALinks(html []byte, url string) (*AppleCALinks, error) {

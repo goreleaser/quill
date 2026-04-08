@@ -1,3 +1,7 @@
+before:
+  hooks:
+    - go generate ./cmd/quill/cli/commands
+
 release:
   # If set to auto, will mark the release as not ready for production in case there is an indicator for this in the
   # tag e.g. v1.0.0-rc1 .If set to true, will mark the release as not ready for production.
@@ -42,7 +46,7 @@ builds:
     ldflags: *build-ldflags
     hooks:
       post:
-        - cmd: .tmp/quill sign-and-notarize "{{ .Path }}" --dry-run={{ .IsSnapshot }} --ad-hoc={{ .IsSnapshot }} -vv
+        - cmd: .tool/quill sign-and-notarize "{{ .Path }}" --dry-run={{ .IsSnapshot }} --ad-hoc={{ .IsSnapshot }} -vv
           env:
             - QUILL_LOG_FILE=/tmp/quill-{{ .Target }}.log
 
