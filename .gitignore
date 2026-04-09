@@ -1,7 +1,12 @@
+# local workflow
 go.work
 go.work.sum
 mise.toml
+.claude
+.conductor
+specs
 
+# release assets
 CHANGELOG.md
 /VERSION
 /test/results
@@ -22,9 +27,12 @@ CHANGELOG.md
 *.log
 .images
 .tmp/
+/.tool
+/.task
 coverage.txt
 bin/
 cmd/quill/quill
+generate
 
 # Binaries for programs and plugins
 *.exe
