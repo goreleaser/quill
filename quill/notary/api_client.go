@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"path"
 	"strings"
 	"sync/atomic"
@@ -18,7 +17,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
-	"github.com/goreleaser/quill/internal/redact"
 	"github.com/goreleaser/quill/internal/urlvalidate"
 	"github.com/goreleaser/quill/internal/utils"
 )
@@ -81,9 +79,6 @@ func (s APIClient) submissionRequest(ctx context.Context, request submissionRequ
 
 func (s APIClient) uploadBinary(ctx context.Context, response submissionResponse, bin Payload) error {
 	attrs := response.Data.Attributes
-
-	// there is currently no path that would log these values, but let the redactor know about them just in case
-	redact.Add(attrs.AwsAccessKeyID, attrs.AwsSecretAccessKey, attrs.AwsSessionToken)
 
 	// create AWS config with static credentials
 	cfg, err := config.LoadDefaultConfig(ctx,
@@ -160,8 +155,6 @@ func (s APIClient) submissionLogs(ctx context.Context, id string) (string, error
 		return "", fmt.Errorf("unable to decode log metadata response with ID=%s: %w", id, err)
 	}
 
-	redactPresignedURLParams(resp.Data.Attributes.DeveloperLogURL)
-
 	// fetch logs without auth (presigned URL), with redirect validation for SSRF protection.
 	// use a larger size limit since log files can be bigger than typical API responses.
 	logsResp, err := s.http.getUnauthenticated(ctx, resp.Data.Attributes.DeveloperLogURL)
@@ -226,33 +219,6 @@ func (r *monitoredReader) ReadAt(p []byte, off int64) (int, error) {
 
 func (r *monitoredReader) Seek(offset int64, whence int) (int64, error) {
 	return r.reader.Seek(offset, whence)
-}
-
-func redactPresignedURLParams(rawURL string) {
-	u, err := url.Parse(rawURL)
-	if err != nil {
-		return
-	}
-
-	// check both v2 and v4 signature parameter names (case-sensitive in query strings)
-	params := []string{
-		"AWSAccessKeyId",       // v2 signature
-		"Signature",            // v2 signature
-		"x-amz-security-token", // v2 signature
-		"X-Amz-Security-Token", // v4 signature
-		"X-Amz-Signature",      // v4 signature
-		"X-Amz-Credential",     // v4 signature
-	}
-
-	for _, p := range params {
-		if v := u.Query().Get(p); v != "" {
-			// add both decoded and URL-encoded versions since URLs may be logged either way
-			redact.Add(v)
-			if encoded := url.QueryEscape(v); encoded != v {
-				redact.Add(encoded)
-			}
-		}
-	}
 }
 
 func joinURL(base string, paths ...string) string {
