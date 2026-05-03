@@ -1,6 +1,7 @@
 package quill
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -261,6 +262,7 @@ func TestSign(t *testing.T) {
 			if !tt.args.skipAssertAgainstCodesign {
 				test.AssertAgainstCodesignTool(t, tt.args.path)
 			}
+			require.NoError(t, os.Remove(tt.args.path))
 		})
 	}
 }

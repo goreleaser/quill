@@ -132,6 +132,7 @@ func signSingleBinary(cfg SigningConfig) error {
 	if err != nil {
 		return err
 	}
+	defer m.Close()
 
 	// check there already isn't a LcCodeSignature loader already (if there is, bail)
 	if m.HasCodeSigningCmd() {
