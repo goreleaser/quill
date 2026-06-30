@@ -21,7 +21,7 @@ require (
 	github.com/scylladb/go-set v1.0.3-0.20200225121959-cc7b2070d91e
 	github.com/stretchr/testify v1.11.1
 	github.com/wagoodman/go-progress v0.0.0-20230925121702-07e42b3cdba0
-	software.sslmate.com/src/go-pkcs12 v0.7.0
+	software.sslmate.com/src/go-pkcs12 v0.7.3
 )
 
 require (
